@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ProteinScope · 3D Protein Structure Explorer</title>
+  <meta name="description" content="Explore any protein in 3D. Search by name, gene or PDB ID and see structure, function, disease associations and sequence analysis, powered by RCSB PDB and UniProt.">
+  <meta property="og:title" content="ProteinScope · 3D Protein Structure Explorer">
+  <meta property="og:description" content="Search any protein and explore its 3D structure, biology and sequence properties in the browser.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2322d3ee'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='28' fill='%2305070f' stroke='url(%23g)' stroke-width='5'/%3E%3Cpath d='M18 40c8-20 20 0 28-16' fill='none' stroke='url(%23g)' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="orb orb1" aria-hidden="true"></div>
+  <div class="orb orb2" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="ProteinScope home">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#f472b6"/>
+          </linearGradient>
+        </defs>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="url(#lg)" stroke-width="4"/>
+        <path d="M16 41c9-22 22 2 32-17" fill="none" stroke="url(#lg)" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="16" cy="41" r="4" fill="#22d3ee"/><circle cx="48" cy="24" r="4" fill="#f472b6"/>
+      </svg>
+      <span>Protein<b>Scope</b></span>
+    </a>
+    <nav>
+      <a href="https://github.com/emiresti" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/muhammed-emir-esti-06371a300/" target="_blank" rel="noopener">LinkedIn</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow"><span class="dot"></span> STRUCTURAL BIOINFORMATICS</p>
+    <h1>See the <span class="grad">machinery of life</span> in 3D</h1>
+    <p class="sub">Search any protein by name, gene or PDB ID. Rotate its structure, read its biology and analyse its sequence, all live from RCSB PDB and UniProt.</p>
+
+    <form id="searchForm" class="search" autocomplete="off">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="text" placeholder='Try "p53", "hemoglobin", "insulin" or a PDB ID like 1TUP' aria-label="Search proteins">
+      <button type="submit">Explore</button>
+    </form>
+    <p class="kbd-hint">press <kbd>/</kbd> to search</p>
+    <div class="chips" id="chips"></div>
+    <div id="results" class="results hidden"></div>
+  </section>
+
+  <main id="app" class="app hidden">
+    <section class="card viewer-card">
+      <div class="viewer-head">
+        <span id="pdbBadge" class="badge">—</span>
+        <h2 id="title">—</h2>
+      </div>
+
+      <div class="viewer-wrap" id="viewerWrap">
+        <div id="viewer"></div>
+        <div id="loader" class="loader hidden"><div class="ring"></div><span id="loaderMsg">Loading structure…</span></div>
+        <div class="hint">drag to rotate · scroll to zoom · right-drag to pan · hover atoms</div>
+      </div>
+
+      <div class="controls">
+        <div class="ctrl">
+          <label>Style</label>
+          <div class="seg" data-group="style">
+            <button data-val="cartoon" class="active">Cartoon</button>
+            <button data-val="stick">Sticks</button>
+            <button data-val="sphere">Spheres</button>
+            <button data-val="line">Lines</button>
+            <button data-val="surface">Surface</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <label>Color</label>
+          <div class="seg" data-group="color">
+            <button data-val="spectrum" class="active">Rainbow</button>
+            <button data-val="chain">Chain</button>
+            <button data-val="ss">Secondary</button>
+            <button data-val="amino">Residue</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <label>View</label>
+          <div class="tools">
+            <button class="tog active" id="tSpin">Spin</button>
+            <button class="tog active" id="tLig">Ligands</button>
+            <button id="bReset">Reset</button>
+            <button id="bShot">Screenshot</button>
+            <button id="bFull">Fullscreen</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="card">
+        <h3>Entry</h3>
+        <dl id="entryList" class="dl"></dl>
+      </section>
+
+      <section class="card">
+        <h3>Molecules in this entry</h3>
+        <div id="entityChips" class="ents"></div>
+        <h3 class="sub-h">Biology <small>via UniProt</small></h3>
+        <div id="bioBody"></div>
+      </section>
+    </aside>
+
+    <section class="card seq-card">
+      <div class="seq-head">
+        <h3>Sequence analysis</h3>
+        <button id="bCopy" class="ghost">Copy FASTA</button>
+      </div>
+      <div id="stats" class="stats"></div>
+      <div class="two">
+        <div>
+          <h4>Composition</h4>
+          <div id="comp"></div>
+        </div>
+        <div>
+          <h4>Sequence</h4>
+          <div id="legend" class="legend"></div>
+          <div id="seq" class="seq"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Built by <b>Muhammed Emir Esti</b> · Molecular Biology &amp; Genetics</p>
+    <p class="muted">Data: <a href="https://www.rcsb.org" target="_blank" rel="noopener">RCSB PDB</a> · <a href="https://www.uniprot.org" target="_blank" rel="noopener">UniProt</a> &nbsp;|&nbsp; Viewer: <a href="https://3dmol.org" target="_blank" rel="noopener">3Dmol.js</a></p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://3Dmol.org/build/3Dmol-min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
