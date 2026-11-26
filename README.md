@@ -99,7 +99,7 @@ Any static server works too, for example `python -m http.server 8000`.
 **Muhammed Emir Esti** — Molecular Biology & Genetics + Computer Programming student focused on bioinformatics.
 
 [![GitHub](https://img.shields.io/badge/GitHub-emiresti-181717?style=flat-square&logo=github)](https://github.com/emiresti)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Muhammed_Emir_Esti-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/muhammed-emir-esti)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Muhammed_Emir_Esti-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/muhammed-emir-esti-06371a300)
 
 ---
 
