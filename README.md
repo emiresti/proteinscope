@@ -16,7 +16,7 @@ Search any protein by name, gene or PDB ID, rotate its structure, read its biolo
 
 <br>
 
-<img src="assets/preview.png" alt="ProteinScope screenshot" width="900">
+<img src="assets/preview.svg" alt="ProteinScope preview" width="900">
 
 </div>
 
@@ -63,7 +63,7 @@ proteinscope/
 ├── style.css    # dark "lab" theme, glass cards, animations
 ├── app.js       # API calls, 3D viewer logic, sequence analysis
 ├── assets/
-│   └── preview.png
+│   └── preview.svg
 └── README.md
 ```
 
@@ -96,7 +96,7 @@ Any static server works too, for example `python -m http.server 8000`.
 
 ## 👤 Author
 
-**Muhammed Emir Esti** — Molecular Biology & Genetics student, interested in bioinformatics.
+**Muhammed Emir Esti** — Molecular Biology & Genetics + Computer Programming student focused on bioinformatics.
 
 [![GitHub](https://img.shields.io/badge/GitHub-emiresti-181717?style=flat-square&logo=github)](https://github.com/emiresti)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Muhammed_Emir_Esti-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/muhammed-emir-esti)
